@@ -1,0 +1,35 @@
+/// Invoice date dimension derived from FactInvoices
+table DimDate
+	lineageTag: 5ca85844-c8a6-41e7-bd6e-9297d97a9c2c
+	dataCategory: Time
+
+	column Date
+		isUnique
+		lineageTag: 136a43a5-34e0-41ae-86f1-5ef8f0a830de
+		isNameInferred
+		sourceColumn: [Date]
+
+	column Year
+		lineageTag: 1f3c9a2d-9912-41da-8a6e-16fb917f2b1e
+		isNameInferred
+		sourceColumn: [Year]
+
+	column 'Month Number'
+		lineageTag: 9332679b-dcc4-4d74-8dc2-e20ebccead29
+		isNameInferred
+		sourceColumn: [Month Number]
+
+	column Month
+		lineageTag: 842d8055-f834-40f4-8466-3d2b959f81c6
+		isNameInferred
+		sourceColumn: [Month]
+
+	column 'Year Month'
+		lineageTag: 61109be2-1fcf-4078-9f47-b76f5166626e
+		isNameInferred
+		sourceColumn: [Year Month]
+
+	partition DimDate = calculated
+		mode: import
+		source = ADDCOLUMNS(CALENDAR(MIN(FactInvoices[Invoice Date]), MAX(FactInvoices[Invoice Date])), "Year", YEAR([Date]), "Month Number", MONTH([Date]), "Month", FORMAT([Date], "MMMM"), "Year Month", FORMAT([Date], "YYYY-MM"))
+

@@ -1,0 +1,213 @@
+table FactInvoices
+	lineageTag: a7203e8f-a978-4740-962c-94caf701d535
+
+	column 'Project Code'
+		dataType: int64
+		formatString: 0
+		lineageTag: efd130cc-86b3-4574-9be2-0dcb3bbf6c0d
+		summarizeBy: count
+		sourceColumn: Project Code
+
+		annotation SummarizationSetBy = Automatic
+
+	column Series
+		dataType: string
+		lineageTag: 962840ca-af60-479e-8768-719aa9c61ad9
+		summarizeBy: none
+		sourceColumn: Series
+		sortByColumn: 'Fiscal Year Sort'
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'OA No'
+		dataType: int64
+		formatString: 0
+		lineageTag: 5db54182-c32b-4cf1-9e64-1fce2c140f0f
+		summarizeBy: sum
+		sourceColumn: OA No
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Project Eng'
+		dataType: string
+		lineageTag: ea531b8a-8f9a-4a28-a01b-66aeb5aacf77
+		summarizeBy: none
+		sourceColumn: Project Eng
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Site Name'
+		dataType: string
+		lineageTag: 63281154-60e0-4761-aa92-5b9f96969970
+		summarizeBy: none
+		sourceColumn: Site Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Macro Area (country/Region)'
+		dataType: string
+		lineageTag: cfa8cc24-b121-4b28-a7ba-4b0b14f654e1
+		summarizeBy: none
+		sourceColumn: Macro Area (country/Region)
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Nature of Supply'
+		dataType: string
+		lineageTag: e608a01b-3d00-4896-90ba-0af83258dc02
+		summarizeBy: none
+		sourceColumn: Nature of Supply
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'PO Number'
+		dataType: string
+		lineageTag: 89ab1d89-4374-4729-9629-0b4427098de2
+		summarizeBy: none
+		sourceColumn: PO Number
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'PO Date'
+		dataType: string
+		lineageTag: 743c0b8b-d4b9-4fc2-a305-507cf9fc60a1
+		summarizeBy: none
+		sourceColumn: PO Date
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Payment Terms'
+		dataType: string
+		lineageTag: 1e13d652-a263-45c7-b226-2bc14c15b0b7
+		summarizeBy: none
+		sourceColumn: Payment Terms
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Customer Name'
+		dataType: string
+		lineageTag: 1ef65027-0ca4-4819-8c6b-854d410fea79
+		summarizeBy: none
+		sourceColumn: Customer Name
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item No.'
+		dataType: string
+		lineageTag: 3311e99d-b492-48da-bb7e-99f973076624
+		summarizeBy: none
+		sourceColumn: Item No.
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Item/Service Description'
+		dataType: string
+		lineageTag: 511168cd-7da1-4625-bbf4-9e30270f5c18
+		summarizeBy: none
+		sourceColumn: Item/Service Description
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Remaining Open Quantity'
+		dataType: double
+		lineageTag: fb03eade-dce4-485d-8060-4864b2f5a04c
+		summarizeBy: sum
+		sourceColumn: Remaining Open Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Invoice Quantity'
+		dataType: double
+		lineageTag: 3f5fd4ed-3c98-4daa-b70d-c573eba35c44
+		summarizeBy: sum
+		sourceColumn: Invoice Quantity
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'PO Net Amount'
+		dataType: double
+		lineageTag: a2ce45a3-59ed-4859-ad29-e3637310c5d0
+		summarizeBy: sum
+		sourceColumn: PO Net Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Invoice No'
+		dataType: int64
+		formatString: 0
+		lineageTag: 36822ffa-8892-4720-8d0c-93092c9da08f
+		summarizeBy: sum
+		sourceColumn: Invoice No
+
+		annotation SummarizationSetBy = Automatic
+
+	column 'Invoice Date'
+		dataType: dateTime
+		formatString: Long Date
+		lineageTag: c6add13f-0acf-428e-aa6d-95aef535a9da
+		summarizeBy: none
+		sourceColumn: Invoice Date
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation UnderlyingDateTimeDataType = Date
+
+	column 'Final Invoice Amount'
+		dataType: double
+		lineageTag: 17a9b698-0315-4fd7-bbcd-5c1751320c43
+		summarizeBy: sum
+		sourceColumn: Final Invoice Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	column 'Pending Invoice Amount'
+		dataType: double
+		lineageTag: 1fb35bc6-cc24-4f06-8b84-c4aa924d44dd
+		summarizeBy: sum
+		sourceColumn: Pending Invoice Amount
+
+		annotation SummarizationSetBy = Automatic
+
+		annotation PBI_FormatHint = {"isGeneralNumber":true}
+
+	/// TRUE for 7 records with implausible pending amounts: 6 project codes tied to unrelated IT/consulting companies, plus one Dodla Dairy project (15004131) with a likely decimal/unit entry error. Use to exclude these from pending/collections analysis.
+	column 'Is Flagged Record' = FactInvoices[Project Code] IN {10000022, 10000024, 10000025, 10000026, 10000029, 10000030, 15004131}
+		dataType: boolean
+		lineageTag: 92ad051e-38ae-45c9-97b8-631443b9e23a
+
+	/// Nature of Supply bucketed into Project / Spares / Services / Unspecified / Other for cleaner chart legends.
+	column 'Nature of Supply (Grouped)' = SWITCH(TRUE(), FactInvoices[Nature of Supply] = "PROJECT", "Project", FactInvoices[Nature of Supply] = "SPARES", "Spares", FactInvoices[Nature of Supply] = "SERVICES", "Services", ISBLANK(FactInvoices[Nature of Supply]) || FactInvoices[Nature of Supply] = "", "Unspecified", "Other")
+		dataType: string
+		lineageTag: 0ad1132c-7826-48b2-9009-ec7db9200041
+
+	/// Region/state field with blanks labeled 'Unspecified' instead of showing as blank in visuals.
+	column 'Region (Labeled)' = IF(ISBLANK(FactInvoices[Macro Area (country/Region)]) || FactInvoices[Macro Area (country/Region)] = "", "Unspecified", FactInvoices[Macro Area (country/Region)])
+		dataType: string
+		lineageTag: 625ffba3-7f87-48c9-ae9f-92506713df90
+
+	/// Fiscal-year-start calendar year (Apr-Mar), derived only from Invoice Date so it can safely be used as the sort-by column for Series without circular dependency.
+	column 'Fiscal Year Sort' = YEAR(FactInvoices[Invoice Date]) - IF(MONTH(FactInvoices[Invoice Date]) < 4, 1, 0)
+		dataType: int64
+		lineageTag: 7aee5119-5ed2-4251-9f84-b7721a0a7127
+
+	partition Sheet1 = m
+		mode: import
+		source =
+				let
+				  Source = Excel.Workbook(File.Contents("C:\Users\asus\Downloads\project wise pending invoice.xlsx"), null, true),
+				  #"Navigation 1" = Source{[Item = "Sheet1", Kind = "Sheet"]}[Data],
+				  #"Promoted headers" = Table.PromoteHeaders(#"Navigation 1", [PromoteAllScalars = true]),
+				  #"Changed column type" = Table.TransformColumnTypes(#"Promoted headers", {{"Project Code", Int64.Type}, {"Series", type text}, {"OA No", Int64.Type}, {"Site Name", type text}, {"Macro Area (country/Region)", type text}, {"Nature of Supply", type text}, {"PO Number", type text}, {"Customer Name", type text}, {"Item No.", type text}, {"Item/Service Description", type text}, {"Remaining Open Quantity", type number}, {"Invoice Quantity", type number}, {"PO Net Amount", type number}, {"Invoice No", Int64.Type}, {"Invoice Date", type date}, {"Final Invoice Amount", type number}, {"Pending Invoice Amount", type number}})
+				in
+				  #"Changed column type"
+
+	annotation PBI_ResultType = Table
+

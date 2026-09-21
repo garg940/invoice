@@ -1,0 +1,13 @@
+/// Customer dimension derived from FactInvoices
+table DimCustomer
+	lineageTag: b234ba65-b199-487c-b29a-6c4cc7507dc3
+
+	column 'Customer Name'
+		lineageTag: 1415b45f-ba0d-4f08-80e2-0555d1459005
+		isNameInferred
+		sourceColumn: [Customer Name]
+
+	partition DimCustomer = calculated
+		mode: import
+		source = DISTINCT(SELECTCOLUMNS(FactInvoices, "Customer Name", FactInvoices[Customer Name]))
+

@@ -1,0 +1,94 @@
+/// Central table for model measures
+table MeasureTable
+	lineageTag: d643dd31-8fd7-493b-9288-0457f9ceee49
+
+	/// Total invoiced amount from FactInvoices
+	measure 'Total Invoice Amount' = SUM(FactInvoices[Final Invoice Amount])
+		formatString: #,##0.00
+		lineageTag: 43e59bce-40aa-457e-9977-911a05d986cd
+
+	/// Total pending invoice amount
+	measure 'Total Pending Invoice Amount' = SUM(FactInvoices[Pending Invoice Amount])
+		formatString: #,##0.00
+		lineageTag: 7d89b41b-f5a1-45ec-8132-f27b1386d891
+
+	/// Total invoiced quantity
+	measure 'Total Invoice Quantity' = SUM(FactInvoices[Invoice Quantity])
+		formatString: #,##0.00
+		lineageTag: 94b9d185-dcae-40c1-a166-bcde5a8b6cb6
+
+	/// Total remaining open quantity
+	measure 'Total Open Quantity' = SUM(FactInvoices[Remaining Open Quantity])
+		formatString: #,##0.00
+		lineageTag: 5b1cc028-6f8c-4677-9fc3-106917166f51
+
+	/// Distinct invoice count
+	measure 'Invoice Count' = DISTINCTCOUNT(FactInvoices[Invoice No])
+		formatString: #,##0
+		lineageTag: a1eeccd4-866c-4d2b-bde9-9b6c12dc507e
+
+	/// Distinct project count
+	measure 'Project Count' = DISTINCTCOUNT(FactInvoices[Project Code])
+		formatString: #,##0
+		lineageTag: 906487eb-cdc9-4e80-8264-aa22c5203226
+
+	/// Distinct customer count
+	measure 'Customer Count' = DISTINCTCOUNT(FactInvoices[Customer Name])
+		formatString: #,##0
+		lineageTag: 682e1ee8-680c-47bb-80b9-d5a8bbbaf2ad
+
+	/// Invoiced amount as a percentage of invoiced plus pending amount
+	measure 'Invoice Completion %' = DIVIDE([Total Invoice Amount], [Total Invoice Amount] + [Total Pending Invoice Amount])
+		formatString: 0.0%
+		lineageTag: 23f0ae2b-1c50-481e-ab65-7fb2b72afb65
+
+	/// Total invoiced amount in ₹ Crore (1 Cr = 1,00,00,000).
+	measure 'Total Invoice Amount (Cr)' = DIVIDE([Total Invoice Amount], 10000000)
+		formatString: ₹#,##0.0 "Cr"
+		lineageTag: 6b14c263-a62f-40dd-afaa-fccbb0fd2508
+
+	/// Raw total pending amount in ₹ Crore, including flagged/anomalous records. Includes known data-quality outliers — see 'Adjusted Pending Amount' for a cleaned figure.
+	measure 'Total Pending Amount (Cr)' = DIVIDE([Total Pending Invoice Amount], 10000000)
+		formatString: ₹#,##0.0 "Cr"
+		lineageTag: 98d89a7e-8ce6-465f-b521-335e1745ecd8
+
+	/// Total pending invoice amount excluding the 7 flagged records with implausible values (see 'Is Flagged Record'). Use this for real collections/AR analysis instead of the raw pending measure.
+	measure 'Adjusted Pending Amount' = CALCULATE([Total Pending Invoice Amount], FactInvoices[Is Flagged Record] = FALSE)
+		formatString: "₹"#,##0.00
+		lineageTag: 2e3361d0-a435-40f9-a34c-b158a9ec1d42
+
+	/// Adjusted pending amount (flagged records excluded) in ₹ Crore.
+	measure 'Adjusted Pending Amount (Cr)' = DIVIDE([Adjusted Pending Amount], 10000000)
+		formatString: ₹#,##0.0 "Cr"
+		lineageTag: 578906d3-c8bc-4926-a955-deb81335a597
+
+	/// Invoiced amount as a % of invoiced + adjusted pending, excluding the 7 flagged records. This is the trustworthy version of 'Invoice Completion %'.
+	measure 'Adjusted Collection %' = DIVIDE([Total Invoice Amount], [Total Invoice Amount] + [Adjusted Pending Amount])
+		formatString: 0.0%
+		lineageTag: a05fa60d-de90-4b87-8b61-3a3c8eaba33a
+
+	/// Count of rows flagged as data-quality anomalies.
+	measure 'Flagged Record Count' = CALCULATE(COUNTROWS(FactInvoices), FactInvoices[Is Flagged Record] = TRUE)
+		formatString: #,##0
+		lineageTag: c57c49b3-83e0-44aa-ab11-9816551a4605
+
+	/// Sum of pending amount coming only from the 7 flagged/anomalous records — shows how much of the raw pending total is likely bad data.
+	measure 'Flagged Pending Amount' = CALCULATE([Total Pending Invoice Amount], FactInvoices[Is Flagged Record] = TRUE)
+		formatString: "₹"#,##0.00
+		lineageTag: fd900b50-ec8c-438d-b617-d0a3b7ac930a
+
+	/// Total Invoice Amount, only returned for the top 10 customers by invoice value — use with a customer-name visual filtered to non-blank.
+	measure 'Top 10 Customer Invoice Amount' = VAR CustRank = RANKX(ALL(FactInvoices[Customer Name]), CALCULATE([Total Invoice Amount]), , DESC) RETURN IF(HASONEVALUE(FactInvoices[Customer Name]), IF(CustRank <= 10, [Total Invoice Amount], BLANK()))
+		formatString: "₹"#,##0.00
+		lineageTag: a2ff11af-260d-4ce3-9c22-c82f646f3e41
+
+	column 'Measure Table'
+		isHidden
+		lineageTag: 34d5dff1-a2db-47d9-bf21-69f91d740e1b
+		isNameInferred
+		sourceColumn: [Measure Table]
+
+	partition MeasureTable = calculated
+		mode: import
+		source = ROW("Measure Table", 1)
+

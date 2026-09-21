@@ -1,0 +1,9 @@
+relationship FactInvoices_DimCustomer
+	fromColumn: FactInvoices.'Customer Name'
+	toColumn: DimCustomer.'Customer Name'
+
+relationship FactInvoices_DimDate
+	joinOnDateBehavior: datePartOnly
+	fromColumn: FactInvoices.'Invoice Date'
+	toColumn: DimDate.Date
+
